@@ -19,7 +19,7 @@
 
 import os
 from rich.prompt import Prompt
-from config import console
+from config import console, PROMPT_COLOR, ERROR_COLOR
 from ui import header
 from agent import run_agent, reset_messages
 
@@ -39,7 +39,7 @@ def main():
         try:
 
             user_input = Prompt.ask(
-                "\n[bold cyan]>[/bold cyan]"
+                f"\n[{PROMPT_COLOR}]>[/{PROMPT_COLOR}]"
             )
 
             if user_input.lower() in ["exit", "quit"]:
@@ -50,7 +50,7 @@ def main():
         except KeyboardInterrupt:
 
             console.print(
-                "\n[red]bye[/red]"
+                f"\n[{ERROR_COLOR}]bye[/{ERROR_COLOR}]"
             )
 
             break
@@ -58,7 +58,7 @@ def main():
         except Exception as e:
 
             console.print(
-                f"\n[red]ERROR:[/red] {str(e)}"
+                f"\n[{ERROR_COLOR}]ERROR:[/{ERROR_COLOR}] {str(e)}"
             )
 
 

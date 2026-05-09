@@ -72,8 +72,8 @@ def print_tool_call(name: str, args: dict):
     console.print(
         Panel.fit(
             pretty,
-            title=f"TOOL CALL → {name}",
-            border_style="yellow"
+            title=TOOL_CALL_TITLE.format(name=name),
+            border_style=TOOL_CALL_BORDER_COLOR
         )
     )
 
@@ -83,8 +83,8 @@ def print_tool_result(result: str):
     console.print(
         Panel.fit(
             str(result),
-            title="TOOL RESULT",
-            border_style="green"
+            title=TOOL_RESULT_TITLE,
+            border_style=TOOL_RESULT_BORDER_COLOR
         )
     )
 
@@ -102,10 +102,10 @@ def render_thinking_response(thinking_buffer: str, response_buffer: str) -> Grou
             Panel(
                 Text(
                     thinking_buffer,
-                    style="dim white"
+                    style=THINKING_TEXT_COLOR
                 ),
-                title="[dim]thinking[/dim]",
-                border_style="bright_black",
+                title=THINKING_TITLE,
+                border_style=THINKING_BORDER_COLOR,
             )
         )
 
@@ -113,15 +113,15 @@ def render_thinking_response(thinking_buffer: str, response_buffer: str) -> Grou
         panels.append(
             Panel(
                 Markdown(response_buffer),
-                title="RESPONSE",
-                border_style="cyan",
+                title=RESPONSE_TITLE,
+                border_style=RESPONSE_BORDER_COLOR,
             )
         )
 
     if not panels:
         panels.append(
             Panel(
-                "Waiting for model output...",
+                WAITING_MESSAGE,
                 border_style="dim"
             )
         )
@@ -139,6 +139,6 @@ def get_thinking_spinner() -> Spinner:
         "dots",
         text=Text(
             " thinking...",
-            style="cyan"
+            style=SPINNER_TEXT_COLOR
         )
     )
