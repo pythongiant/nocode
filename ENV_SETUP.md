@@ -10,7 +10,6 @@ Contains hard-coded variables for the LLM integration:
 MODEL_NAME=qwen-coder
 BASE_URL=http://192.168.1.4:9005/v1
 API_KEY=dummy
-WORKSPACE_PATH=./workspace
 ```
 
 **Customize these values to:**

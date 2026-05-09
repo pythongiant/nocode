@@ -1,0 +1,29 @@
+# Default UI Color Configuration
+# Override these by creating ~/.config/nocode/.env.colors
+
+# Header styling
+HEADER_BORDER_COLOR=bright_cyan
+HEADER_TEXT_COLOR=bold cyan
+
+# Panel styling
+TOOL_CALL_BORDER_COLOR=yellow
+TOOL_RESULT_BORDER_COLOR=green
+THINKING_BORDER_COLOR=bright_black
+THINKING_TEXT_COLOR=dim white
+RESPONSE_BORDER_COLOR=cyan
+
+# Spinner styling
+SPINNER_COLOR=cyan
+SPINNER_TEXT_COLOR=cyan
+
+# UI Text Colors
+PROMPT_COLOR=bold cyan
+ERROR_COLOR=red
+SUCCESS_COLOR=green
+
+# Panel Titles
+TOOL_CALL_TITLE=TOOL CALL → {name}
+TOOL_RESULT_TITLE=TOOL RESULT
+THINKING_TITLE=[dim]thinking[/dim]
+RESPONSE_TITLE=RESPONSE
+WAITING_MESSAGE=Waiting for model output...

@@ -4,12 +4,13 @@
 import json
 from rich.live import Live
 
-from config import client, console, SYSTEM_PROMPT
-from tools import TOOLS, TOOL_SCHEMAS
-from parser import parse_stream_token
-from ui import (
+from .config import client, console, MODEL_NAME, SYSTEM_PROMPT
+from .tools import TOOLS, TOOL_SCHEMAS, _consume_changes
+from .parser import parse_stream_token
+from .ui import (
     print_tool_call,
     print_tool_result,
+    print_file_changes,
     render_thinking_response,
     get_thinking_spinner
 )
@@ -81,7 +82,7 @@ def run_agent(user_prompt: str):
         ) as live:
 
             stream = client.chat.completions.create(
-                model="qwen-coder",
+                model=MODEL_NAME,
                 messages=messages,
                 tools=TOOL_SCHEMAS,
                 tool_choice="auto",
@@ -226,6 +227,7 @@ def run_agent(user_prompt: str):
                     result = f"ERROR: {str(e)}"
 
             print_tool_result(result)
+            print_file_changes(_consume_changes())
 
             messages.append({
                 "role": "tool",

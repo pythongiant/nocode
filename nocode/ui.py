@@ -7,10 +7,9 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.text import Text
 from rich.spinner import Spinner
-from config import (
+from .config import (
     MODEL_NAME,
     BASE_URL,
-    WORKSPACE,
     console,
     HEADER_BORDER_COLOR,
     HEADER_TEXT_COLOR,
@@ -48,7 +47,6 @@ def header():
 
 [bold white]model:[/bold white] {MODEL_NAME}
 [bold white]base url:[/bold white] {BASE_URL}
-[bold white]workspace:[/bold white] {WORKSPACE.resolve()}
 """
 
     console.print(
@@ -85,6 +83,33 @@ def print_tool_result(result: str):
             str(result),
             title=TOOL_RESULT_TITLE,
             border_style=TOOL_RESULT_BORDER_COLOR
+        )
+    )
+
+
+def print_file_changes(changes: list[dict]):
+    """Render a colored summary panel: `path  +N -M  (status)`."""
+    if not changes:
+        return
+
+    body = Text()
+    width = max(len(c["path"]) for c in changes)
+
+    for i, c in enumerate(changes):
+        if i:
+            body.append("\n")
+        body.append(c["path"].ljust(width + 2))
+        body.append(f"+{c['added']}", style="green")
+        body.append(" ")
+        body.append(f"-{c['removed']}", style="red")
+        if c["status"] != "modified":
+            body.append(f"  ({c['status']})", style="dim")
+
+    console.print(
+        Panel.fit(
+            body,
+            title="FILE CHANGES",
+            border_style=TOOL_RESULT_BORDER_COLOR,
         )
     )
 

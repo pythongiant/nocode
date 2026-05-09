@@ -1,0 +1,5 @@
+# Default API Configuration
+# Override these by exporting env vars or creating ~/.config/nocode/.env
+MODEL_NAME=qwen-coder
+BASE_URL=http://192.168.1.4:9005/v1
+API_KEY=dummy

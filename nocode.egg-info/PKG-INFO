@@ -1,12 +1,16 @@
-```
-███╗   ██╗ ██████╗  ██████╗ ██████╗ ██████╗ ███████╗
-████╗  ██║██╔═══██╗██╔════╝██╔═══██╗██╔══██╗██╔════╝
-██╔██╗ ██║██║   ██║██║     ██║   ██║██║  ██║█████╗
-██║╚██╗██║██║   ██║██║     ██║   ██║██║  ██║██╔══╝
-██║ ╚████║╚██████╔╝╚██████╗╚██████╔╝██████╔╝███████╗
-╚═╝  ╚═══╝ ╚═════╝  ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝
+Metadata-Version: 2.4
+Name: nocode
+Version: 0.1.0
+Summary: NOCODE — autonomous, terminal-native coding agent.
+Author: pythongiant
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: openai>=2.0.0
+Requires-Dist: python-dotenv>=1.0.0
+Requires-Dist: rich>=13.0.0
 
-```
+# NOCODE
+
 An autonomous, terminal-native coding agent — Claude Code-style UX, but pointed at any OpenAI-compatible model (local or hosted).
 
 NOCODE installs as a single CLI command, `nocode`, that you can run from **any directory on your system**. It treats the directory you launch it in as the workspace and drives a live REPL with streaming responses, separated thinking panels, and shell tool execution.
@@ -37,7 +41,6 @@ That registers a `nocode` console script on your `$PATH`.
 nocode              # run the agent in the current directory
 nocode .            # same thing, explicit
 nocode ~/projects/foo   # cd into that path first, then run
-nocode -y           # auto-approve every shell command (skip prompts)
 python -m nocode    # equivalent module entry point
 ```
 
@@ -47,43 +50,6 @@ Inside the REPL:
 - `exit` or `quit` to leave. `Ctrl+C` also works.
 
 The agent runs shell commands relative to whichever directory you launched it in, so it sees *your* project, not the install location.
-
----
-
-## Command permissions
-
-Before NOCODE runs **any** shell command, it shows you the command and asks:
-
-```
-[y]es / [n]o / [a]lways
-```
-
-- **y** — run this command once.
-- **n** — deny it. The model is told the user denied the command and is asked to take a different approach (no infinite retry loop).
-- **a** — auto-approve every command for the rest of the session.
-
-If you want to skip prompts from the start, launch with `nocode -y` (alias `--yes`). Useful for trusted, scripted use; not recommended for an agent driving an unfamiliar workspace.
-
----
-
-## File-change diffs
-
-After each shell command, NOCODE snapshots your workspace before and after, then prints a colored summary of every file that was created, modified, or deleted:
-
-```
-┌─ FILE CHANGES ───────────────┐
-│ main.py     +1 -2            │
-│ tools.py    +12 -0  (created)│
-│ stale.py    +0 -8   (deleted)│
-└──────────────────────────────┘
-```
-
-The same summary is appended to the result the model receives, so it always knows what side effects its commands had.
-
-Notes on what's snapshotted:
-- The walk skips `.git`, `node_modules`, `env`, `venv`, `__pycache__`, `dist`, `build`, and other common ignore dirs.
-- Files larger than 512 KB are tracked for create/delete but skipped for line diffs.
-- Only changes inside the workspace root (the directory you launched `nocode` in) are tracked.
 
 ---
 
@@ -139,12 +105,10 @@ Streaming output is split into two panels:
 nocode/                       # the installable package
 ├── __init__.py
 ├── __main__.py               # `python -m nocode`
-├── main.py                   # CLI entry point + arg parsing (--yes)
+├── main.py                   # CLI entry point + arg parsing
 ├── config.py                 # layered .env loading, OpenAI client
 ├── agent.py                  # streaming loop, tool dispatch, history
 ├── tools.py                  # run_terminal_command + schemas
-├── permissions.py            # y/n/a confirmation gate
-├── diff.py                   # before/after workspace snapshots
 ├── parser.py                 # <think> tag stream parser
 ├── ui.py                     # Rich panels, header, spinner
 └── defaults/
@@ -161,3 +125,4 @@ pyproject.toml                # build + console_scripts
 - An OpenAI-compatible chat completions endpoint with tool-calling support
 
 Dependencies (`openai`, `python-dotenv`, `rich`) are pulled in automatically by pip.
+# nocode
