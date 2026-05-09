@@ -13,7 +13,7 @@ NOCODE installs as a single CLI command, `nocode`, that you can run from **any d
 
 ### Working with KVBoost and nocode (tested on a 8GB GPU RTX 4060)
 
-```
+```bash
 pip install kvboost
 
 PYTORCH_ALLOC_CONF=expandable_segments:True python -m kvboost.server   --model Qwen/Qwen3-8B-AWQ   --device cuda --dtype bfloat16   --max-cache-bytes 1e9 --chunk-size 128  
@@ -22,7 +22,7 @@ r" --port 9005   --enable-auto-tool-choice --tool-call-parser hermes
 ```
 
 edit the .env 
-```
+```bash
 # API Configuration
 MODEL_NAME=qwen-coder
 BASE_URL=http://localhost:9005/v1
