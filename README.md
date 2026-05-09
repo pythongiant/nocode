@@ -1,80 +1,117 @@
-# NOCODE Agent - Refactored Structure
+# NOCODE
 
-This project has been refactored into multiple focused modules for better code organization and maintainability.
+An autonomous, terminal-native coding agent — Claude Code-style UX, but pointed at any OpenAI-compatible model (local or hosted).
 
-## Project Structure
+NOCODE installs as a single CLI command, `nocode`, that you can run from **any directory on your system**. It treats the directory you launch it in as the workspace and drives a live REPL with streaming responses, separated thinking panels, and shell tool execution.
 
-### `main.py` (Entry Point)
-- The application's entry point
-- Handles the main REPL loop
-- Minimal logic - delegates to other modules
+---
 
-### `config.py` (Configuration & Shared Instances)
-- API configuration (model, base URL, API key)
-- Workspace configuration
-- Shared instances (OpenAI client, Rich console)
-- System prompt for the agent
+## Install
 
-### `tools.py` (Tool Implementations)
-- All tool functions (read_file, write_file, list_files, run_terminal_command)
-- Tools registry (`TOOLS` dict)
-- Tool schemas for the API (`TOOL_SCHEMAS`)
-
-### `ui.py` (User Interface)
-- All Rich UI rendering functions
-- Header display
-- Tool call/result panels
-- Thinking and response rendering
-- Spinner creation
-
-### `parser.py` (Stream Parsing)
-- Token parsing logic for thinking/response separation
-- `parse_stream_token()` function that handles `<think>` tags
-
-### `agent.py` (Agent Logic)
-- Message history management
-- Main `run_agent()` function
-- Agent loop implementation
-- Tool execution and response handling
-
-## Module Dependencies
-
-```
-main.py
-├── config (for console, header setup)
-├── ui (for header, UI display)
-└── agent (for run_agent function)
-
-agent.py
-├── config (for client, SYSTEM_PROMPT)
-├── tools (for TOOLS, TOOL_SCHEMAS)
-├── parser (for parse_stream_token)
-└── ui (for UI rendering functions)
-
-ui.py
-└── config (for console, MODEL_NAME, BASE_URL, WORKSPACE)
-
-tools.py
-└── config (for WORKSPACE)
-
-parser.py
-└── (no external dependencies)
-
-config.py
-└── (only standard library + openai, rich)
-```
-
-## Running the Application
+From the repo root:
 
 ```bash
-python main.py
+pip install .
 ```
 
-## Benefits of This Refactoring
+Or, if you're hacking on it:
 
-1. **Clear Separation of Concerns** - Each module has a single responsibility
-2. **Easier Testing** - Individual modules can be tested in isolation
-3. **Better Maintainability** - Changes to one concern don't affect others
-4. **Reusability** - Modules can be imported and used independently
-5. **Scalability** - Easy to add new features or modify existing ones
-6. **Collaborative Development** - Multiple developers can work on different modules
+```bash
+pip install -e .
+```
+
+That registers a `nocode` console script on your `$PATH`.
+
+---
+
+## Usage
+
+```bash
+nocode              # run the agent in the current directory
+nocode .            # same thing, explicit
+nocode ~/projects/foo   # cd into that path first, then run
+python -m nocode    # equivalent module entry point
+```
+
+Inside the REPL:
+
+- Type a prompt, hit enter — the agent streams its response and may call tools.
+- `exit` or `quit` to leave. `Ctrl+C` also works.
+
+The agent runs shell commands relative to whichever directory you launched it in, so it sees *your* project, not the install location.
+
+---
+
+## Configuration
+
+NOCODE reads two config files, layered from lowest to highest precedence:
+
+1. **Bundled defaults** — shipped inside the package (`nocode/defaults/`). Always available, never edited by you.
+2. **User config** — `~/.config/nocode/.env` and `~/.config/nocode/.env.colors`. The right place for your personal model/endpoint setup.
+3. **Per-project override** — a `.env` or `.env.colors` in whichever directory you launch `nocode` from.
+4. **Process environment** — anything exported in your shell wins over file values.
+
+You can also set `NOCODE_CONFIG_DIR` to point at a different user config directory.
+
+### `.env` — model & API
+
+```bash
+MODEL_NAME=qwen-coder
+BASE_URL=http://localhost:11434/v1
+API_KEY=dummy
+```
+
+Any OpenAI-compatible endpoint works — local llama.cpp, Ollama, vLLM, OpenAI itself, etc.
+
+### `.env.colors` — UI theming
+
+Override any of the Rich panel colors / titles. See [`nocode/defaults/default_env_colors`](nocode/defaults/default_env_colors) for the full list of keys.
+
+### First-time setup
+
+```bash
+mkdir -p ~/.config/nocode
+cp nocode/defaults/default_env        ~/.config/nocode/.env
+cp nocode/defaults/default_env_colors ~/.config/nocode/.env.colors
+# edit ~/.config/nocode/.env to point at your model
+```
+
+---
+
+## How it works
+
+The agent has one tool: `run_terminal_command`. Every action — reading, writing, listing, testing, building — happens via shell commands executed in your working directory. Output streams back to the model, which decides the next step. The loop continues until the model emits no more tool calls.
+
+Streaming output is split into two panels:
+- **thinking** (dimmed) — anything the model wraps in `<think>...</think>`
+- **response** (rendered as Markdown) — everything else
+
+---
+
+## Project layout
+
+```
+nocode/                       # the installable package
+├── __init__.py
+├── __main__.py               # `python -m nocode`
+├── main.py                   # CLI entry point + arg parsing
+├── config.py                 # layered .env loading, OpenAI client
+├── agent.py                  # streaming loop, tool dispatch, history
+├── tools.py                  # run_terminal_command + schemas
+├── parser.py                 # <think> tag stream parser
+├── ui.py                     # Rich panels, header, spinner
+└── defaults/
+    ├── default_env           # bundled fallback model config
+    └── default_env_colors    # bundled fallback theme
+pyproject.toml                # build + console_scripts
+```
+
+---
+
+## Requirements
+
+- Python 3.9+
+- An OpenAI-compatible chat completions endpoint with tool-calling support
+
+Dependencies (`openai`, `python-dotenv`, `rich`) are pulled in automatically by pip.
+# nocode
