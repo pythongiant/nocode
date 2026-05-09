@@ -44,7 +44,7 @@ def confirm_command(command: str) -> bool:
 
     while True:
         choice = Prompt.ask(
-            f"[{PROMPT_COLOR}][y]es / [n]o / [a]lways[/{PROMPT_COLOR}]",
+            f"[{PROMPT_COLOR}]yes / no / always[/{PROMPT_COLOR}]",
             default="y",
             show_default=True,
         ).strip().lower()

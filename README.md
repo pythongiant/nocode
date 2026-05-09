@@ -11,6 +11,24 @@ An autonomous, terminal-native coding agent — Claude Code-style UX, but pointe
 
 NOCODE installs as a single CLI command, `nocode`, that you can run from **any directory on your system**. It treats the directory you launch it in as the workspace and drives a live REPL with streaming responses, separated thinking panels, and shell tool execution.
 
+### Working with KVBoost and nocode (tested on a 8GB GPU RTX 4060)
+
+```
+pip install kvboost
+
+PYTORCH_ALLOC_CONF=expandable_segments:True python -m kvboost.server   --model Qwen/Qwen3-8B-AWQ   --device cuda --dtype bfloat16   --max-cache-bytes 1e9 --chunk-size 128  
+ --prefill-chunk-size 512   --recompute-strategy cacheblend --kv-cache-bits 8 --sink-tokens 4   --batch-window-ms 0 --max-batch-size 1 --max-queue-size 64   --workers 1 --host 0.0.0.0 --model-name "qwen-code
+r" --port 9005   --enable-auto-tool-choice --tool-call-parser hermes
+```
+
+edit the .env 
+```
+# API Configuration
+MODEL_NAME=qwen-coder
+BASE_URL=http://localhost:9005/v1
+API_KEY=dummy
+```
+
 ---
 
 ## Install
